@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gold Trading Demo</title>
+<style>
+:root{--navy:#0b1f40;--navy2:#173461;--gold:#d7b66a;--ink:#142844;--muted:#818895}
+*{box-sizing:border-box}body{margin:0;background:#0d2040;font-family:Arial,sans-serif;color:#fff}
+header{padding:22px 20px 16px;font-size:27px;background:#0b1e3c}
+.notice-header{height:56px;background:#172f55;display:flex;align-items:center;justify-content:center;position:relative;font-size:14px;font-weight:700}
+.notice-header button{position:absolute;left:14px;background:none;border:0;color:#fff;font-size:24px}
+.notice-list{padding:12px 10px}
+.notice-item{display:flex;gap:9px;align-items:flex-start;background:#172f55;border-radius:13px;padding:11px;margin:8px 0 12px;min-height:94px;box-shadow:0 3px 10px #07172e}
+.notice-icon{width:72px;height:72px;flex:0 0 72px;border-radius:7px;background:#fff;display:grid;place-items:center;font-size:39px}
+.notice-copy{flex:1;min-width:0}
+.notice-title{font-size:12px;font-weight:bold;color:#8794aa}
+.notice-date{font-size:10px;color:#8794aa;text-align:center;margin-top:14px}
+.blog-head{height:56px;background:#10294f;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:22px;font-weight:bold}
+.blog-head button{border:0;border-radius:24px;background:var(--gold);padding:11px 16px;font-weight:bold;color:#152b4b}
+.blog-compose,.blog-post{border:1px solid #24558a;border-radius:13px;margin:10px;padding:12px;background:#0d274d}
+.blog-compose textarea{width:100%;min-height:70px;background:#173762;border:1px solid #24558a;border-radius:10px;padding:12px;color:white;resize:vertical;font:14px Arial}
+.blog-actions{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap}
+.upload-label{border:1px dashed #5b8bc2;border-radius:9px;padding:12px;color:#dbe8fb;font-size:13px;cursor:pointer}
+.post-btn{border:0;border-radius:10px;background:var(--gold);padding:13px 24px;font-weight:bold;color:#102747}
+.blog-user{font-size:13px;font-weight:bold;color:#e5efff}
+.blog-time{font-size:11px;color:#7fa2ce;margin-top:4px}
+.blog-caption{font-size:13px;line-height:1.5;margin:10px 0}
+.blog-preview{display:block;max-width:100%;max-height:260px;object-fit:contain;border-radius:8px;margin:8px 0}
+.demo-proof{background:#173762;border:1px solid #5578a5;border-radius:9px;padding:14px;max-width:280px;margin:10px 0;color:#dce9fa;font-size:12px}
+.demo-proof strong{display:block;color:#ffcf70;text-align:center;font-size:14px;margin-bottom:10px}
+.demo-proof .watermark{font-size:18px;font-weight:bold;text-align:center;color:#ffcf70;border:2px dashed #ffcf70;padding:10px;margin:8px 0}
+.blog-note{font-size:11px;color:#a9bdd7;padding:0 12px 8px}
+.blog-meta{font-size:11px;color:#8db4e4;margin-top:8px}
+.account-wrap{padding:10px}
+.account-profile{display:flex;align-items:center;gap:10px;padding:10px 4px;color:#dce8fa;font-size:12px}
+.account-logo{font-size:28px;color:#e6c16e}
+.vip-strip,.account-balance,.quick-actions,.account-row{background:#172f55;border-radius:13px;margin:9px 0;padding:13px}
+.vip-strip{font-size:12px;color:#d7e4f7}
+.progress{height:5px;background:#e9edf3;border-radius:9px;margin:8px 0 0 64px;overflow:hidden}
+.progress span{display:block;width:35%;height:100%;background:var(--gold)}
+.account-balance{display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:12px}
+.account-balance strong{display:block;font-size:14px;color:#fff;margin-bottom:5px}
+.account-balance .income{grid-column:1/-1}
+.account-balance small{color:#a9bdd7}
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;text-align:center}
+.quick-actions button{background:none;border:0;color:#e8c879;font-size:12px;padding:5px 0}
+.quick-actions span{display:block;font-size:22px;margin-bottom:5px}
+.account-section{font-size:13px;color:#d7e4f7;margin:20px 10px 8px}
+.account-row{display:flex;align-items:center;gap:10px;padding:13px;font-size:12px;font-weight:bold;color:#dce8fa}
+.account-row .row-icon{font-size:18px;color:#e6c16e}
+.account-row .arrow{margin-left:auto;color:#7895b8}
+.account-action{border:0;border-radius:10px;background:#d7b66a;color:#142844;padding:11px 14px;font-weight:bold}
+.wallet-modal{background:#173762;border:1px solid #42658f;border-radius:13px;margin:12px;padding:14px}
+.wallet-modal input{width:100%;padding:12px;border-radius:8px;border:1px solid #5578a5;background:#0d274d;color:white;margin:8px 0}
+.wallet-hint{font-size:11px;color:#afc1d9;line-height:1.5}
+.wallet-record{font-size:11px;color:#cbd9ed;border-top:1px solid #345078;padding:9px 0}
+.home-wrap{padding:10px 10px 24px}
+.home-profile{display:flex;align-items:center;gap:9px;padding:8px 5px 15px;font-size:11px;color:#dce8fa}
+.home-logo{font-size:26px;color:var(--gold)}
+.home-panel{background:#172f55;border-radius:15px;padding:12px;margin:8px 0 10px}
+.home-balances{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 0}
+.home-balances strong{display:block;font-size:14px;color:#fff;margin-bottom:8px}
+.home-balances small{font-size:10px;color:#a9bdd7}
+.home-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#1c4072;border-radius:12px;padding:10px 4px;text-align:center}
+.home-actions button{border:0;background:transparent;color:#e6c879;font-size:11px;padding:2px}
+.home-actions span{display:block;font-size:21px;margin-bottom:5px}
+.home-section-title{font-size:12px;font-weight:bold;color:#dce8fa;margin-bottom:8px}
+.invite-code{background:#203e6c;border-radius:9px;padding:12px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.invite-level{display:grid;grid-template-columns:40px 1fr 1fr 1fr;align-items:center;text-align:center;background:#203e6c;border-radius:10px;padding:10px 5px;margin-top:7px;font-size:11px}
+.invite-level small{display:block;color:#a9bdd7;font-size:10px;margin-top:4px}
+.team-page{padding:0 12px 100px}.team-top{height:48px;background:#172f55;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:bold;margin:-8px -10px 12px;position:relative}.team-top button{position:absolute;left:12px;background:none;border:0;color:#fff;font-size:24px}.team-hero{height:80px;text-align:right;padding:6px 28px;font-size:42px}.team-invite{background:#172f55;border-radius:10px;padding:12px;margin:8px 0 12px;color:#9fd8ca;font-size:11px;overflow-wrap:anywhere}.team-invite strong{display:block;color:#ffeb55;font-size:18px;margin-top:3px}.team-section{background:#172f55;border-radius:10px;padding:10px;margin-bottom:12px}.team-section-title{display:flex;justify-content:space-between;font-size:12px;font-weight:bold;padding:3px 2px 9px}.team-level{display:grid;grid-template-columns:48px 1fr 1fr 1fr;gap:3px;align-items:center;background:#0d2040;border-radius:7px;padding:9px 4px;margin:7px 0;font-size:11px}.team-medal{font-size:30px}.team-level small{display:block;color:#a9bdd7;font-size:10px;margin-bottom:5px}.team-level b{font-size:12px}.team-explain{background:#172f55;border-radius:10px;padding:12px;font-size:11px;line-height:1.6;color:#a9bdd7}.team-explain strong{color:#e2ebfa;font-size:12px}.team-explain p{margin:8px 0}.team-link-btn{border:0;border-radius:50%;background:#3565a4;color:white;padding:8px;font-size:17px;flex-shrink:0}
+.reward-tile{min-height:78px;display:flex;align-items:center;justify-content:space-between;background:#172f55;border-radius:14px;margin:8px 0;padding:12px;font-size:11px;color:#dce8fa}
+.reward-tile p{margin:5px 0;color:#9fb3cf;font-size:10px}
+.reward-tile button{border:0;border-radius:20px;background:#244d83;color:#fff;padding:5px 12px;font-size:10px}
+.home-about{background:#172f55;border-radius:13px;padding:12px;font-size:10px;line-height:1.6;color:#a9bdd7;margin-top:10px}
+.home-about b{color:#dce8fa}
+.tabs{display:flex;gap:8px;padding:12px 10px;background:#10284e;position:sticky;top:0;z-index:2}
+.tabs button{flex:1;border:0;border-radius:30px;background:#1b3969;color:white;padding:12px 5px;font-weight:bold}
+.tabs button.active{background:var(--gold);color:#fff}
+main{padding:8px 10px 90px;max-width:760px;margin:auto}
+.card{border:2px solid #345078;border-radius:17px;padding:8px;margin:8px 0 12px;background:#142e57;box-shadow:0 2px 5px #08152b}
+.info{display:flex;gap:9px;align-items:center;background:#f5f6f8;color:var(--ink);border-radius:12px;padding:8px;min-height:83px}
+.pic{width:74px;height:74px;flex:0 0 74px;border-radius:8px;background:#fff;display:grid;place-items:center;font-size:42px}
+.details{min-width:0;flex:1;font-size:12px}
+.name{font-size:13px;font-weight:700;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.line{display:flex;justify-content:space-between;gap:5px;color:var(--muted);line-height:1.55}
+.line b{color:var(--ink);white-space:nowrap}
+.line b.green{color:#19785f}
+.buy{margin-top:7px;background:var(--gold);border:0;border-radius:10px;color:white;width:100%;padding:12px 9px;display:flex;justify-content:space-between;font-size:12px}
+footer{position:fixed;bottom:0;left:0;right:0;background:#214c89;display:flex;justify-content:space-around;padding:12px 4px 9px;color:#c6d6ef;font-size:11px}
+footer span{text-align:center;line-height:1.8}
+.notice{font-size:11px;color:#d2d9e5;text-align:center;padding:8px}
+
+.phonepe-panel{background:#090909;border:1px solid #6840a0;border-radius:14px;padding:16px;margin-top:14px;text-align:center;color:#fff}
+.phonepe-panel h3{color:#c18aff;margin:4px 0 12px}
+.phonepe-qr{display:block;width:min(100%,330px);height:auto;margin:12px auto;border-radius:8px}
+.upi-line{background:#1b1b1b;border-radius:8px;padding:11px;overflow-wrap:anywhere;font-weight:bold;margin:10px 0}
+.phonepe-panel input{width:100%;padding:12px;border-radius:8px;border:1px solid #5578a5;background:#0d274d;color:white;margin:8px 0}
+.pending-note{font-size:12px;color:#ffd98a;line-height:1.5;margin-top:10px}
+
+
+/* Added premium responsive polish */
+:root{--navy:#08172f;--navy2:#173461;--gold:#e6c16e;--ink:#142844;--muted:#818895;--panel:#172f55}
+body{background:radial-gradient(ellipse at top,#173663 0%,#0d2040 48%,#07162d 100%);min-height:100vh}
+header{background:linear-gradient(110deg,#08172f,#18375f);font-weight:800;letter-spacing:.2px;border-bottom:1px solid #3c5780}
+.tabs{box-shadow:0 8px 22px #06122666;backdrop-filter:blur(10px)}
+.tabs button{transition:transform .15s,background .15s;border:1px solid #35527a}
+.tabs button:active,.home-actions button:active,.quick-actions button:active{transform:scale(.97)}
+.tabs button.active{background:linear-gradient(135deg,#f1d78f,#c99b45);color:#102747;box-shadow:0 3px 12px #d7b66a44}
+.home-panel,.vip-strip,.account-balance,.quick-actions,.account-row,.reward-tile,.card,.blog-compose,.blog-post,.wallet-modal{box-shadow:0 7px 20px #06122645;border:1px solid #2b4b77}
+.account-profile,.home-profile{cursor:pointer;border-radius:12px}
+.account-logo,.home-logo{width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#f4dfa0,#b98a32);color:#13284a;overflow:hidden;flex-shrink:0}
+.profile-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);background:#203e6c}
+.account-row{cursor:pointer;transition:background .15s}
+.account-row:active{background:#244775}
+.account-action,.post-btn{background:linear-gradient(135deg,#f0d68e,#c69b4c);box-shadow:0 3px 10px #0002}
+.wallet-modal input,.wallet-modal select{outline:none;transition:border-color .15s,box-shadow .15s}
+.wallet-modal input:focus,.wallet-modal select:focus,.blog-compose textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d7b66a22}
+.profile-form label,.bank-form label{display:block;color:#dce8fa;font-size:12px;margin-top:12px}
+.profile-form input,.bank-form input,.bank-form select{width:100%;padding:12px;border-radius:9px;border:1px solid #42658f;background:#0d274d;color:white;margin-top:6px;font:14px Arial}
+.profile-avatar-large{width:88px;height:88px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);background:#203e6c}
+.form-help{font-size:11px;line-height:1.55;color:#a9bdd7;margin-top:10px}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.settings-grid>*{min-width:0}
+@media(max-width:420px){header{font-size:23px;padding:18px 14px}.tabs{gap:5px;padding:10px 6px}.tabs button{font-size:11px;padding:11px 3px}.settings-grid{grid-template-columns:1fr}}
+.demo-pill{display:inline-block;border:1px solid #5578a5;border-radius:20px;padding:4px 9px;font-size:10px;color:#b8cce8;margin-left:6px}.admin-stat{background:#203e6c;border:1px solid #345783;border-radius:10px;padding:12px}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}.admin-stat b{display:block;font-size:18px;color:#f0d68e;margin-top:6px}.login-hero{text-align:center;padding:18px 8px}.login-hero .crown{font-size:42px;color:var(--gold)}.login-hero h2{margin:8px 0}.admin-note{font-size:11px;line-height:1.55;color:#b5c7df;background:#0d274d;padding:11px;border-radius:9px;margin-top:12px}
+
+
+.level-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}
+.level-card{background:linear-gradient(145deg,#203f6d,#12294c);border:1px solid #6c5a35;border-radius:12px;padding:12px;min-width:0}
+.level-card .level-name{font-size:12px;color:#dce8fa;font-weight:bold}
+.level-card .level-price{font-size:19px;color:#f0d68e;font-weight:bold;margin:8px 0}
+.level-card .level-button{width:100%;border:0;border-radius:8px;padding:9px 5px;background:linear-gradient(135deg,#f0d68e,#c69b4c);color:#142844;font-weight:bold;font-size:11px}
+.level-disclaimer{font-size:11px;line-height:1.5;color:#ffd98a;background:#332b21;border:1px solid #80683b;padding:10px;border-radius:9px;margin:8px 0 12px}
+@media(max-width:360px){.level-grid{grid-template-columns:1fr}.level-card .level-price{font-size:18px}}
+
+/* Added features: animation, support, admin tables */
+@keyframes goldFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+#products>.wallet-modal,#products>.home-wrap,#products>.account-wrap,#products>.team-page{animation:goldFadeIn .24s ease-out}
+.support-card{background:linear-gradient(145deg,#1b365e,#0d2342);border:1px solid #4a6285;border-radius:13px;padding:14px;margin:10px 0}
+.support-card a{color:#f0d68e;overflow-wrap:anywhere}
+.admin-user,.admin-request{background:#102747;border:1px solid #35527a;border-radius:10px;padding:11px;margin:8px 0;font-size:12px;overflow-wrap:anywhere}
+.status-chip{display:inline-block;border:1px solid #b99a53;color:#f0d68e;border-radius:15px;padding:3px 8px;font-size:10px;margin-top:5px}
+.small-admin-btn{border:0;border-radius:7px;padding:7px 9px;margin:5px 4px 0 0;background:#d7b66a;color:#142844;font-weight:bold}
+@media(prefers-reduced-motion:reduce){#products>.wallet-modal,#products>.home-wrap,#products>.account-wrap,#products>.team-page{animation:none}}
+
+</style>
+</head>
+<body>
+<header id="mainHeader">Welcome Here</header>
+<div id="blogHeader" class="blog-head" style="display:none"><span>Blog</span><button onclick="toast('এটি একটি ডেমো Blog')">✎ My Posts</button></div>
+<div id="noticeHeader" class="notice-header" style="display:none"><button onclick="showPage('stable')">‹</button>Notice</div>
+<nav class="tabs">
+<button id="stableTab" onclick="showPage('stable')">Stable</button>
+<button id="welfareTab" onclick="showPage('welfare')">Welfare</button>
+<button id="activityTab" onclick="showPage('activity')">Activity <sup>Hot</sup></button>
+<button onclick="toast('Demo records')">▤</button>
+</nav>
+<main id="products"></main>
+<div class="notice">ডেমো ওয়েবসাইট — প্রদর্শিত আয় কাল্পনিক; real investment/payment বা online database চালু নেই।</div>
+<footer><span onclick="showHome()">⌂<br>Home</span><span onclick="showPage('stable')">▥<br>Invest</span><span onclick="showNotice()">☷<br>Notice</span><span onclick="showBlog()">●<br>Blog</span><span onclick="showAccount()">♙<br>Account</span></footer>
+<script>
+const stable=[
+['Purchase upgrade to VIP1','💍',246.5,12078.5,49,290],
+['Purchase upgrade to VIP2','💎',3689.4,180780.6,49,4290],
+['Purchase upgrade to VIP3','💍',8526,417774,49,9800],
+['Purchase upgrade to VIP4','📿',19184,940016,49,21800],
+['Purchase upgrade to VIP5','✨',38092,1866508,49,42800],
+['Purchase upgrade to VIP6','👑',56520,2769480,49,62800],
+['Purchase upgrade to VIP7','💠',82616,4048014,49,89800],
+['Purchase upgrade to VIP8','🏵️',120320,5895680,49,128000]
+];
+const activity=[
+['Gold diamond ring jewelry','💍','Daily Earnings',833,18326,'22 Days',3,490],
+['Gold diamond ring jewelry','💍','Daily Earnings',2750.7,60515.4,'22 Days',3,1590],
+['Gold diamond ring jewelry','💍','Daily Earnings',13032.6,286717.2,'22 Days',3,7490],
+['Gold diamond ring jewelry','💍','Daily Earnings',80350.5,401752.5,'5 Days',1,23290],
+['Gold diamond ring jewelry','💍','Daily Earnings',343377.5,686755,'2 Days',1,72290]
+];
+const welfare=[
+['Lucky Draw','🎯','Hourly earnings',1,1,'1 Hours',1],
+['Gold diamond ring jewelry','💍','Hourly earnings',3667.5,3661.63,'1 Hours',1630],
+['Gold diamond ring jewelry','💍','Hourly earnings',8470,8456.45,'1 Hours',3630],
+['VIP1 Benefits','💛','Daily Earnings',200,200,'1 Days',100],
+['VIP2 Benefits','💎','Daily Earnings',1000,1000,'1 Days',500],
+['VIP3 Benefits','💍','Daily Earnings',4000,4000,'1 Days',1000],
+['VIP4 Benefits','📿','Daily Earnings',8000,8000,'1 Days',2000],
+['VIP5 Benefits','✨','Daily Earnings',20000,20000,'1 Days',4000]
+];
+function money(n){return Number(n).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function makeCard(item,page){
+let name,icon,label,daily,total,duration,maximum,price;
+if(page==='stable'){[name,icon,daily,total,duration,price]=item;label='Daily Earnings';maximum=1}
+else if(page==='activity'){[name,icon,label,daily,total,duration,maximum,price]=item}
+else{[name,icon,label,daily,total,duration,price]=item;maximum=1}
+return `<section class="card"><div class="info"><div class="pic">${icon}</div><div class="details"><div class="name">👑 ${name}</div><div class="line"><span>${label}</span><b class="green">₹ ${money(daily)}</b></div><div class="line"><span>Total Revenue</span><b>₹ ${money(total)}</b></div><div class="line"><span>Revenue</span><b>${duration}</b></div><div class="line"><span>Maximum</span><b>${maximum}</b></div></div></div><button class="buy" onclick="buyProduct(${Number(price)||0},'${String(name).replace(/'/g, "\\'")}')"><span>Price <b>₹${money(price)}.00</b></span><span>Buy Now</span></button></section>`
+}
+const depositLevels=[
+ {level:1,amount:1800},{level:2,amount:2800},{level:3,amount:4800},{level:4,amount:6800},
+ {level:5,amount:8600},{level:6,amount:10300},{level:7,amount:16400},{level:8,amount:19900}
+];
+function renderDepositLevels(){
+ return `<div class="home-panel"><div class="home-section-title">Deposit Levels</div><p style="font-size:10px;color:#a9bdd7;margin:0 0 8px">Choose a level to prefill the demo deposit form.</p><div class="level-grid">${depositLevels.map(item=>`<div class="level-card"><div class="level-name">LEVEL ${item.level}</div><div class="level-price">₹${money(item.amount)}</div><button class="level-button" onclick="chooseLevelDeposit(${item.amount})">Choose Level</button></div>`).join('')}</div><div class="level-disclaimer">ডেমো মাত্র: এই লেভেল বেছে নিলে শুধু deposit form-এ amount বসবে। কোনো বাস্তব payment, investment, profit বা balance credit হবে না।</div></div>`;
+}
+function chooseLevelDeposit(amount){showWalletForm('deposit',amount)}
+
+function showHome(){
+document.getElementById('mainHeader').style.display='none';
+document.getElementById('blogHeader').style.display='none';
+document.getElementById('noticeHeader').style.display='none';
+document.querySelector('.tabs').style.display='none';
+document.getElementById('products').style.display='block';
+document.querySelector('.notice').style.display='none';
+document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+document.getElementById('products').innerHTML=`
+<div class="home-wrap">
+ <div class="home-profile" onclick="showProfile()"><img id="homeAvatar" class="profile-avatar" alt="Profile" src="" onerror="this.style.display='none'"><div class="home-logo" id="homeFallback">♛</div><div><b id="homeProfileName">Demo Member</b><br><small id="homeProfileEmail">Tap to edit profile</small></div><span style="margin-left:auto">✎</span></div>
+ <div class="home-panel">
+  <div class="home-balances">
+   <div><strong>₹${money(demoWallet.deposit)}</strong><small>Recharge Balance</small></div>
+   <div><strong>₹${money(demoWallet.withdrawal)}</strong><small>Withdraw Balance</small></div>
+   <div><strong>₹0.00</strong><small>Product Income</small></div>
+  </div>
+  <div class="home-actions">
+   <button onclick="showWalletForm('deposit')"><span>💳</span>Recharge</button>
+   <button onclick="showWalletForm('withdraw')"><span>💸</span>Withdraw</button>
+   <button onclick="showTeam()"><span>👥</span>Team</button>
+   <button onclick="toast('Telegram link has not been configured.')"><span>➤</span>Telegram</button>
+  </div>
+ </div>
+ ${renderDepositLevels()}
+ <div class="home-panel">
+  <div class="home-section-title">Invite Friends to Earn Commission</div>
+  <p style="font-size:10px;color:#9fb3cf;margin:0 0 9px">Demo referral panel — no commission is paid.</p>
+  <div class="invite-code"><div><b>Demo invitation code: DEMO0001</b><br><small style="color:#a9bdd7">Invite activation reward: ₹0.00</small></div><button class="account-action" onclick="navigator.clipboard?.writeText('DEMO0001');toast('Demo code copied if clipboard access is available.')">🔗</button></div>
+  <div class="invite-level"><span>🥇</span><div><b>0%</b><small>Level 1 Rebate</small></div><div><b>0</b><small>Total invite</small></div><div><b>0</b><small>Active</small></div></div>
+  <div class="invite-level"><span>🥈</span><div><b>0%</b><small>Level 2 Rebate</small></div><div><b>0</b><small>Total invite</small></div><div><b>0</b><small>Active</small></div></div>
+  <div class="invite-level"><span>🥉</span><div><b>0%</b><small>Level 3 Rebate</small></div><div><b>0</b><small>Total invite</small></div><div><b>0</b><small>Active</small></div></div>
+ </div>
+ <div class="reward-tile"><div><b>Sign in to receive rewards</b><p>Demo daily check-in reward: ₹0.00</p><button onclick="toast('Demo check-in only. No reward is credited.')">Sign in</button></div><span style="font-size:36px">🎁</span></div>
+ <div class="reward-tile"><div><b>Lucky Draw</b><p>Demo preview — no cash prizes.</p><button onclick="toast('Lucky Draw demo is not active.')">Go →</button></div><span style="font-size:36px">🎡</span></div>
+ <div class="reward-tile"><div><b>Task reward</b><p>Complete demo tasks — no real salary or payout.</p><button onclick="toast('Task reward demo is not active.')">Go →</button></div><span style="font-size:36px">🏆</span></div>
+ <div class="home-about"><b>About Us</b><br>This is a sample gold-themed website interface for demonstration. No investment service, referral commission, or payment processing is provided.<br><br><b>Our Core Purpose</b><br>To demonstrate a clear, transparent account and wallet interface with a starting balance of ₹0.00.</div>
+ <div class="wallet-hint" style="text-align:center;padding:12px">সব পরিমাণ ডেমো। নতুন অ্যাকাউন্টের শুরুতে সব ব্যালেন্স ₹0.00।</div>
+</div>`;
+}
+function resetViews(){
+document.getElementById('mainHeader').style.display='';
+document.getElementById('blogHeader').style.display='none';
+document.getElementById('noticeHeader').style.display='none';
+document.querySelector('.tabs').style.display='flex';
+document.getElementById('products').style.display='block';
+document.querySelector('.notice').style.display='';
+}
+function showPage(page){
+resetViews();
+document.getElementById('products').style.display='';
+document.getElementById('products').innerHTML='';
+document.querySelector('.notice').style.display='';
+document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+document.getElementById(page+'Tab')?.classList.add('active');
+if(page==='stable')stable.forEach(x=>products.insertAdjacentHTML('beforeend',makeCard(x,page)));
+else if(page==='welfare')welfare.forEach(x=>products.insertAdjacentHTML('beforeend',makeCard(x,page)));
+else activity.forEach(x=>products.insertAdjacentHTML('beforeend',makeCard(x,page)));
+}
+function showNotice(){
+document.getElementById('mainHeader').style.display='none';
+document.getElementById('blogHeader').style.display='none';
+document.getElementById('noticeHeader').style.display='flex';
+document.querySelector('.tabs').style.display='none';
+document.getElementById('products').style.display='block';
+document.querySelector('.notice').style.display='none';
+document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+const notices=[
+['Referral Rewards','🐻','2026-09-26 10:40:44'],
+['Daily Check-in Bonus','VIP','2026-09-26 10:40:24'],
+['Lottery Draw','🎡','2026-09-26 10:39:46'],
+['Telegram Channel','✈️','2026-09-26 10:39:23'],
+['Daily recharge rewards','🎆','2026-09-26 10:38:32']
+];
+document.getElementById('products').innerHTML='<div class="notice-list">'+notices.map(n=>`<div class="notice-item"><div class="notice-icon">${n[1]}</div><div class="notice-copy"><div class="notice-title">${n[0]}</div><div class="notice-date">${n[2]}</div></div></div>`).join('')+'</div>';
+}
+function showBlog(){
+document.getElementById('mainHeader').style.display='none';
+document.getElementById('noticeHeader').style.display='none';
+document.getElementById('blogHeader').style.display='flex';
+document.querySelector('.tabs').style.display='none';
+document.getElementById('products').style.display='block';
+document.querySelector('.notice').style.display='none';
+document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+renderBlog();
+}
+const blogPosts=[
+ {user:'Demo_User_01',caption:'এটি একটি নমুনা পোস্ট। নিজের আসল অভিজ্ঞতা ও যাচাইযোগ্য তথ্য শেয়ার করুন।',time:'Sample post',proof:true},
+ {user:'Demo_User_02',caption:'এখানে নিজের পেমেন্ট বা লেনদেনের সত্যিকারের স্ক্রিনশট আপলোড করতে পারবেন।',time:'Sample post',proof:true},
+ {user:'Demo_User_03',caption:'নমুনা পোস্ট — এটি কোনো বাস্তব withdrawal confirmation নয়।',time:'Sample post',proof:true}
+];
+let selectedBlogImage='';
+function renderBlog(){
+const composer=`<section class="blog-compose"><textarea id="blogCaption" placeholder="Share your experience..."></textarea><div id="blogImagePreview"></div><div class="blog-actions"><label class="upload-label">▧ Upload Screenshot <small>(JPG/PNG)</small><input id="blogFile" type="file" accept="image/png,image/jpeg,image/webp" hidden onchange="previewBlogImage(event)"></label><button class="post-btn" onclick="publishBlogPost()">➤ Post</button></div><div class="blog-note">শুধু নিজের আসল স্ক্রিনশট দিন। অন্যের পেমেন্ট প্রমাণ বা সম্পাদিত/ভুয়া withdrawal proof পোস্ট করবেন না।</div></section>`;
+const posts=blogPosts.map(p=>`<article class="blog-post"><div class="blog-user">♛　${p.user}　<span style="color:#e6c16e">✓</span></div><div class="blog-time">${p.time}</div><div class="blog-caption">${p.caption}</div>${p.image?`<img class="blog-preview" src="${p.image}" alt="User uploaded screenshot">`:p.proof?`<div class="demo-proof"><strong>DEMO SAMPLE</strong><div class="watermark">NOT REAL<br>PAYMENT PROOF</div><div>Example layout only — no transaction occurred.</div></div>`:''}<div class="blog-meta">♡　0　　▢　0　　#experience</div></article>`).join('');
+document.getElementById('products').innerHTML=composer+posts;
+}
+function previewBlogImage(event){
+const file=event.target.files&&event.target.files[0];if(!file)return;
+if(!['image/jpeg','image/png','image/webp'].includes(file.type)){toast('শুধু JPG, PNG বা WEBP ছবি দিন।');return}
+if(file.size>8*1024*1024){toast('ছবির সাইজ 8MB-এর কম রাখুন।');return}
+const reader=new FileReader();reader.onload=()=>{selectedBlogImage=reader.result;document.getElementById('blogImagePreview').innerHTML=`<img class="blog-preview" src="${selectedBlogImage}" alt="Screenshot preview">`};reader.readAsDataURL(file);
+}
+function publishBlogPost(){
+const caption=document.getElementById('blogCaption').value.trim();
+if(!caption&&!selectedBlogImage){toast('আগে লেখা বা স্ক্রিনশট যোগ করুন।');return}
+blogPosts.unshift({user:'Your_Demo_Account',caption:caption||'Screenshot uploaded',time:'Just now',image:selectedBlogImage,proof:false});
+selectedBlogImage='';renderBlog();toast('ডেমো পোস্ট যোগ হয়েছে। এটি শুধু এই ব্রাউজার সেশনে থাকবে।');
+}
+// Demo wallet: values are stored locally in this browser only. No real payments occur.
+let demoWallet={deposit:0,withdrawal:0,purchases:0,records:[]};
+try{const sess=JSON.parse(localStorage.getItem('goldDemoSession')||'null');const saved=JSON.parse(localStorage.getItem(sess&&sess.accountId?'goldDemoWallet_'+sess.accountId:'goldDemoWallet')||'null');if(saved&&typeof saved.deposit==='number'&&typeof saved.withdrawal==='number')demoWallet={purchases:0,records:[],...saved};}catch(e){}
+if(!Number.isFinite(demoWallet.purchases))demoWallet.purchases=0;
+if(!Array.isArray(demoWallet.records))demoWallet.records=[];
+function saveWallet(){try{localStorage.setItem('goldDemoWallet',JSON.stringify(demoWallet));const sess=JSON.parse(localStorage.getItem('goldDemoSession')||'null');if(sess&&sess.accountId)localStorage.setItem('goldDemoWallet_'+sess.accountId,JSON.stringify(demoWallet));}catch(e){}}
+function walletBalance(){return Math.max(0,demoWallet.deposit-demoWallet.withdrawal-demoWallet.purchases);}
+function buyProduct(amount,name){
+ amount=Number(amount);
+ if(!Number.isFinite(amount)||amount<=0){toast('এই পণ্যের সঠিক দাম নেই।');return}
+ if(walletBalance()<amount){
+  toast('আপনার Demo Balance যথেষ্ট নয়। আগে Deposit করুন।');
+  showWalletForm('deposit',amount);
+  return;
+ }
+ if(!confirm(`${name} কিনতে ₹${money(amount)} Demo Balance থেকে কাটা হবে। চালিয়ে যাবেন?`))return;
+ demoWallet.purchases+=amount;
+ demoWallet.records.unshift({type:'buy',amount,name,time:new Date().toLocaleString(),status:'Demo purchase'});
+ saveWallet();
+ showAccount();
+ toast('Demo purchase সফল হয়েছে। কোনো বাস্তব পণ্য বা বিনিয়োগ কেনা হয়নি।');
+}
+function showAccount(){
+document.getElementById('mainHeader').style.display='none';
+document.getElementById('blogHeader').style.display='none';
+document.getElementById('noticeHeader').style.display='none';
+document.querySelector('.tabs').style.display='none';
+document.getElementById('products').style.display='block';
+document.querySelector('.notice').style.display='none';
+document.getElementById('products').innerHTML=`
+<div class="account-wrap">
+ <div class="account-profile" onclick="showProfile()"><img id="accountAvatar" class="profile-avatar" alt="Profile" src="" onerror="this.style.display='none'"><div class="account-logo" id="accountFallback">♛</div><div><b id="accountProfileName">Demo Member</b><br><small id="accountProfileEmail">Account ID: ${safeText(demoSession.accountId||'DEMO-0001')} · Tap to edit</small></div><span style="margin-left:auto">✎</span></div>
+ <div class="vip-strip">👑　VIP 0 <small style="float:right">New member</small><div class="progress"><span style="width:0%"></span></div></div>
+ <div class="account-balance">
+  <div><strong>₹${money(demoWallet.deposit)}</strong><small>Recharge Balance</small></div>
+  <div><strong>₹${money(demoWallet.withdrawal)}</strong><small>Withdrawal Total</small></div>
+  <div class="income"><strong>₹${money(walletBalance())}</strong><small>Available Demo Balance</small></div>
+ </div>
+ <div class="quick-actions">
+  <button onclick="showWalletForm('deposit')"><span>💳</span>Recharge</button>
+  <button onclick="showWalletForm('withdraw')"><span>💸</span>Withdraw</button>
+  <button onclick="toast('My Orders: demo account has no orders yet.')"><span>📋</span>My Orders</button>
+  <button onclick="showBankSettings()"><span>🏦</span>Bank Card</button>
+ </div>
+ ${renderDepositLevels()}
+ <div class="account-section">My Business</div>
+ <div class="account-row" onclick="showTeam()"><span class="row-icon">♧</span>Team <span class="arrow">→</span></div>
+ <div class="account-row" onclick="toast('No rewards yet')"><span class="row-icon">♔</span>Rewards <span class="arrow">→</span></div>
+ <div class="account-section">Fund Profile</div>
+  <div class="account-row" onclick="showBankSettings()"><span class="row-icon">🏦</span>Bank / UPI Settings <span class="arrow">→</span></div>
+  <div class="account-row" onclick="showProfile()"><span class="row-icon">♙</span>Edit Profile <span class="arrow">→</span></div>
+ <div class="account-row" onclick="showWalletHistory()"><span class="row-icon">♙</span>Balance <span class="arrow">→</span></div>
+ <div class="account-row" onclick="showWalletHistory('deposit')"><span class="row-icon">▣</span>Recharge Record <span class="arrow">→</span></div>
+ <div class="account-row" onclick="showWalletHistory('withdraw')"><span class="row-icon">⇧</span>Withdraw Record <span class="arrow">→</span></div>
+ <div class="account-section">Other Activities</div>
+ <div class="account-row" onclick="toast('About Us — demo website')"><span class="row-icon">ⓘ</span>About Us <span class="arrow">→</span></div>
+ <div class="account-row" onclick="toast('VIP information — demo only')"><span class="row-icon">◇</span>VIP <span class="arrow">→</span></div>
+ <div class="account-row" onclick="toast('Support Center demo')"><span class="row-icon">☏</span>Support Center <span class="arrow">→</span></div>
+ <div class="account-row" onclick="toast('Settings demo')"><span class="row-icon">⚙</span>Settings <span class="arrow">→</span></div>
+ <div class="account-row" style="justify-content:center" onclick="toast('Demo logout')">◷　Logout</div>
+ <div class="wallet-hint" style="text-align:center;padding:10px">ডেমো ওয়ালেট: এখানে কোনো বাস্তব টাকা জমা, উত্তোলন বা ব্যাংক লেনদেন হয় না।</div>
+</div>`;
+}
+function showTeam(){
+document.getElementById('mainHeader').style.display='none';
+document.getElementById('blogHeader').style.display='none';
+document.getElementById('noticeHeader').style.display='none';
+document.querySelector('.tabs').style.display='none';
+document.getElementById('products').style.display='block';
+document.querySelector('.notice').style.display='none';
+document.getElementById('products').innerHTML=`
+<div class="team-page">
+ <div class="team-top"><button onclick="showAccount()">‹</button>Team</div>
+ <div class="team-hero">👥✨</div>
+ <div class="team-invite"><div id="teamInviteUrl">Demo invitation link</div><strong>Invite Link</strong><button class="team-link-btn" onclick="navigator.clipboard?.writeText('DEMO0001');toast('Demo invite code copied if clipboard access is available.')" aria-label="Copy invite link">🔗</button></div>
+ <div class="team-section"><div class="team-section-title"><span>Team Level</span><span>Team Details &gt;</span></div>
+  <div class="team-level"><span class="team-medal">🥇</span><div><small>Lv 1 Rebate</small><b>60%</b></div><div><small>Total invite</small><b>0</b></div><div><small>Active</small><b>0</b></div></div>
+  <div class="team-level"><span class="team-medal">🥈</span><div><small>Lv 2 Rebate</small><b>3%</b></div><div><small>Total invite</small><b>0</b></div><div><small>Active</small><b>0</b></div></div>
+  <div class="team-level"><span class="team-medal">🥉</span><div><small>Lv 3 Rebate</small><b>2%</b></div><div><small>Total invite</small><b>0</b></div><div><small>Active</small><b>0</b></div></div>
+ </div>
+ <div class="team-explain"><strong>Team & Referral Information</strong><p>This screen is a visual demo of a team and invitation dashboard.</p><p>Level percentages and invite counts are sample values only. No real referral rewards, commissions, salary, or investment returns are generated or guaranteed.</p><p>For a real referral program, terms and verified account data must be provided by the service operator.</p></div>
+</div>`;
+}
+// Profile and bank settings are demo-only and saved in this browser on this device.
+let demoProfile={name:'Demo Member',email:'',avatar:''};
+let demoBank={holder:'',bankName:'',accountNumber:'',ifsc:'',upi:''};
+try{demoProfile={...demoProfile,...JSON.parse(localStorage.getItem('goldDemoProfile')||'{}')};}catch(e){}
+try{demoBank={...demoBank,...JSON.parse(localStorage.getItem('goldDemoBank')||'{}')};}catch(e){}
+function safeText(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function syncProfile(){
+ const name=demoProfile.name||'Demo Member',email=demoProfile.email||'Tap to edit profile';
+ ['homeProfileName','accountProfileName'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=name;});
+ ['homeProfileEmail','accountProfileEmail'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=(id==='accountProfileEmail'&&demoSession.accountId?'Account ID: '+demoSession.accountId+' · '+email:email);});
+ [['homeAvatar','homeFallback'],['accountAvatar','accountFallback']].forEach(([imgId,fallbackId])=>{const img=document.getElementById(imgId),fb=document.getElementById(fallbackId);if(img&&fb){if(demoProfile.avatar){img.src=demoProfile.avatar;img.style.display='block';fb.style.display='none';}else{img.style.display='none';fb.style.display='grid';}}});
+}
+function showProfile(){
+ document.getElementById('mainHeader').style.display='none';document.getElementById('blogHeader').style.display='none';document.getElementById('noticeHeader').style.display='none';document.querySelector('.tabs').style.display='none';document.querySelector('.notice').style.display='none';
+ document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>Edit Profile</div><div class="wallet-modal profile-form"><div style="text-align:center;padding:8px"><img class="profile-avatar-large" id="profileAvatarPreview" src="${demoProfile.avatar||''}" alt="Profile photo" onerror="this.style.display='none'"><div style="margin-top:10px"><label class="upload-label">📷 Choose profile photo<input type="file" id="profilePhoto" accept="image/png,image/jpeg,image/webp" hidden onchange="previewProfilePhoto(event)"></label></div></div><label>Display name</label><input id="profileName" maxlength="60" value="${safeText(demoProfile.name)}" placeholder="Enter your name"><label>Email address</label><input id="profileEmail" type="email" maxlength="120" value="${safeText(demoProfile.email)}" placeholder="Enter email (optional)"><button class="account-action" style="width:100%;margin-top:16px" onclick="saveProfile()">Save Profile</button><p class="form-help">প্রোফাইলের তথ্য শুধু এই ব্রাউজারের local storage-এ থাকবে। এটি কোনো server account বা secure login নয়।</p></div>`;
+}
+function previewProfilePhoto(event){const file=event.target.files&&event.target.files[0];if(!file)return;if(!['image/jpeg','image/png','image/webp'].includes(file.type)){toast('JPG, PNG বা WEBP ছবি দিন।');return}if(file.size>2*1024*1024){toast('ছবির সাইজ 2MB-এর কম রাখুন।');return}const reader=new FileReader();reader.onload=()=>{demoProfile.avatar=reader.result;const img=document.getElementById('profileAvatarPreview');img.src=reader.result;img.style.display='inline-block';};reader.readAsDataURL(file);}
+function saveProfile(){const name=document.getElementById('profileName').value.trim(),email=document.getElementById('profileEmail').value.trim();if(!name){toast('নাম লিখুন।');return}demoProfile.name=name;demoProfile.email=email;try{localStorage.setItem('goldDemoProfile',JSON.stringify(demoProfile));if(demoSession.accountId)localStorage.setItem('goldDemoProfile_'+demoSession.accountId,JSON.stringify(demoProfile));}catch(e){}showAccount();syncProfile();toast('ডেমো প্রোফাইল এই ডিভাইসে সেভ হয়েছে।');}
+function showBankSettings(){
+ document.getElementById('mainHeader').style.display='none';document.getElementById('blogHeader').style.display='none';document.getElementById('noticeHeader').style.display='none';document.querySelector('.tabs').style.display='none';document.querySelector('.notice').style.display='none';
+ document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>Bank / UPI Settings</div><div class="wallet-modal bank-form"><p style="margin-top:0;color:#e6c16e;font-weight:bold">Payment details (demo only)</p><label>Account holder name</label><input id="bankHolder" maxlength="80" value="${safeText(demoBank.holder)}" placeholder="Name on bank account"><label>Bank name</label><input id="bankName" maxlength="100" value="${safeText(demoBank.bankName)}" placeholder="Enter bank name"><label>Account number</label><input id="bankAccount" inputmode="numeric" maxlength="30" value="${safeText(demoBank.accountNumber)}" placeholder="Enter account number"><label>IFSC code</label><input id="bankIfsc" maxlength="15" value="${safeText(demoBank.ifsc)}" placeholder="e.g. ABCD0123456"><label>UPI ID (optional)</label><input id="bankUpi" maxlength="100" value="${safeText(demoBank.upi)}" placeholder="name@upi"><button class="account-action" style="width:100%;margin-top:16px" onclick="saveBankSettings()">Save Bank Details</button><button class="account-action" style="width:100%;margin-top:10px;background:#294a75;color:#fff" onclick="showAccount()">Cancel</button><p class="form-help">সতর্কতা: এই HTML demo-তে তথ্য শুধু আপনার browser-এ থাকে। এখানে বাস্তব ব্যাংক লেনদেন, UPI যাচাই বা নিরাপদ server storage নেই। পাবলিক ডিভাইসে সংবেদনশীল ব্যাংক তথ্য সংরক্ষণ করবেন না।</p></div>`;
+}
+function saveBankSettings(){demoBank={holder:document.getElementById('bankHolder').value.trim(),bankName:document.getElementById('bankName').value.trim(),accountNumber:document.getElementById('bankAccount').value.trim(),ifsc:document.getElementById('bankIfsc').value.trim().toUpperCase(),upi:document.getElementById('bankUpi').value.trim()};try{localStorage.setItem('goldDemoBank',JSON.stringify(demoBank));}catch(e){}showAccount();toast('ডেমো ব্যাংক তথ্য এই ডিভাইসে সেভ হয়েছে।');}
+
+// Local-only demo accounts. Not secure authentication; account data stays in this browser only.
+let demoAccounts=[];
+let demoSession={loggedIn:false,username:'',accountId:''};
+try{demoAccounts=JSON.parse(localStorage.getItem('goldDemoAccounts')||'[]');if(!Array.isArray(demoAccounts))demoAccounts=[];}catch(e){demoAccounts=[];}
+try{demoSession={...demoSession,...JSON.parse(localStorage.getItem('goldDemoSession')||'{}')};}catch(e){}
+let authMode='login';
+function saveDemoAccounts(){try{localStorage.setItem('goldDemoAccounts',JSON.stringify(demoAccounts));}catch(e){toast('এই browser-এ account save করা যায়নি।');}}
+function makeAccountId(){let id;do{id='GT'+String(Math.floor(10000000+Math.random()*90000000));}while(demoAccounts.some(a=>a.accountId===id));return id;}
+function showLogin(mode='login'){
+ authMode=mode;
+ document.getElementById('mainHeader').style.display='none';document.getElementById('blogHeader').style.display='none';document.getElementById('noticeHeader').style.display='none';document.querySelector('.tabs').style.display='none';document.querySelector('.notice').style.display='none';
+ const body=demoSession.loggedIn?`<div class="wallet-modal"><p>Logged in as <b>${safeText(demoSession.username)}</b></p><p>Your Account ID: <b style="color:var(--gold)">${safeText(demoSession.accountId||'')}</b></p><button class="account-action" style="width:100%" onclick="logoutDemo()">Sign Out</button></div>`:`<div class="wallet-modal bank-form"><div class="login-hero"><div class="crown">♛</div><h2>${authMode==='register'?'Create Account':'Welcome Back'}</h2><p class="form-help">${authMode==='register'?'Register to get your own unique Account ID':'Login with your registered username and password'}</p></div>${authMode==='register'?`<label>Full Name</label><input id="demoRegDisplay" maxlength="60" placeholder="Enter your name">`:''}<label>Username / Email</label><input id="demoAuthName" maxlength="100" autocomplete="username" placeholder="Enter username or email"><label>Password</label><input id="demoAuthPassword" type="password" minlength="6" maxlength="100" autocomplete="${authMode==='register'?'new-password':'current-password'}" placeholder="${authMode==='register'?'Create password (minimum 6 characters)':'Enter password'}">${authMode==='register'?`<label>Confirm Password</label><input id="demoAuthConfirm" type="password" minlength="6" maxlength="100" autocomplete="new-password" placeholder="Re-enter password">`:''}<div id="authMessage" role="alert" style="display:none;color:#ff9a9a;font-size:13px;margin-top:10px"></div><button class="account-action" style="width:100%;margin-top:16px" onclick="${authMode==='register'?'registerDemo()':'loginDemo()'}">${authMode==='register'?'Register':'Login'}</button><button class="account-action" style="width:100%;margin-top:10px;background:#294a75;color:#fff" onclick="showLogin('${authMode==='register'?'login':'register'}')">${authMode==='register'?'Already have an account? Login':'New user? Register'}</button><p class="admin-note">ডেমো সতর্কতা: Account ID ও তথ্য শুধু এই browser-এর local storage-এ থাকে। এটি secure server login নয়; এখানে বাস্তব পাসওয়ার্ড ব্যবহার করবেন না।</p></div>`;
+ document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>${authMode==='register'?'Register':'Login'}</div>${body}`;
+}
+function showAuthError(message){const el=document.getElementById('authMessage');if(el){el.textContent=message;el.style.display='block';}else toast(message);}
+function registerDemo(){
+ const name=(document.getElementById('demoAuthName')?.value||'').trim().toLowerCase();
+ const display=(document.getElementById('demoRegDisplay')?.value||'').trim();
+ const password=document.getElementById('demoAuthPassword')?.value||'';
+ const confirmPassword=document.getElementById('demoAuthConfirm')?.value||'';
+ if(!display){showAuthError('আপনার নাম লিখুন।');return;}
+ if(name.length<3){showAuthError('Username / Email কমপক্ষে ৩ অক্ষরের হতে হবে।');return;}
+ if(password.length<6){showAuthError('Password কমপক্ষে ৬ অক্ষরের দিন।');return;}
+ if(password!==confirmPassword){showAuthError('Confirm password মিলছে না।');return;}
+ if(demoAccounts.some(a=>a.username.toLowerCase()===name)){showAuthError('এই username/email আগে থেকেই আছে। Login করুন অথবা অন্য username দিন।');return;}
+ const account={username:name,displayName:display,accountId:makeAccountId(),password:password,createdAt:new Date().toISOString()};
+ demoAccounts.push(account);saveDemoAccounts();
+ demoSession={loggedIn:true,username:account.username,accountId:account.accountId};
+ try{localStorage.setItem('goldDemoSession',JSON.stringify(demoSession));localStorage.setItem('goldDemoProfile',JSON.stringify({name:display,email:name.includes('@')?name:'',avatar:''}));localStorage.setItem('goldDemoWallet_'+account.accountId,JSON.stringify({deposit:0,withdrawal:0,purchases:0,records:[]}));}catch(e){}
+ demoProfile={name:display,email:name.includes('@')?name:'',avatar:''};demoWallet={deposit:0,withdrawal:0,purchases:0,records:[]};saveWallet();
+ showAccount();syncProfile();toast('Registration successful! Your Account ID: '+account.accountId);
+}
+function loginDemo(){
+ const name=(document.getElementById('demoAuthName')?.value||'').trim().toLowerCase();
+ const password=document.getElementById('demoAuthPassword')?.value||'';
+ if(!name||!password){showAuthError('Username/email এবং password লিখুন।');return;}
+ const account=demoAccounts.find(a=>a.username.toLowerCase()===name);
+ if(!account){showAuthError('Account পাওয়া যায়নি। আগে Register করুন।');return;}
+ if(account.password!==password){showAuthError('Wrong password! আবার চেষ্টা করুন।');return;}
+ demoSession={loggedIn:true,username:account.username,accountId:account.accountId};
+ try{localStorage.setItem('goldDemoSession',JSON.stringify(demoSession));const prof=JSON.parse(localStorage.getItem('goldDemoProfile_'+account.accountId)||'null');if(prof){demoProfile=prof;localStorage.setItem('goldDemoProfile',JSON.stringify(demoProfile));}else{demoProfile={name:account.displayName,email:account.username.includes('@')?account.username:'',avatar:''};localStorage.setItem('goldDemoProfile',JSON.stringify(demoProfile));}const w=JSON.parse(localStorage.getItem('goldDemoWallet_'+account.accountId)||'null');demoWallet=w&&typeof w.deposit==='number'?w:{deposit:0,withdrawal:0,records:[]};saveWallet();}catch(e){}
+ showAccount();syncProfile();toast('Login successful! Account ID: '+account.accountId);
+}
+function logoutDemo(){
+ if(demoSession.accountId){try{localStorage.setItem('goldDemoProfile_'+demoSession.accountId,JSON.stringify(demoProfile));localStorage.setItem('goldDemoWallet_'+demoSession.accountId,JSON.stringify(demoWallet));}catch(e){}}
+ demoSession={loggedIn:false,username:'',accountId:''};try{localStorage.setItem('goldDemoSession',JSON.stringify(demoSession));}catch(e){}showLogin('login');toast('Signed out.');
+}
+function showAdmin(){
+ document.getElementById('mainHeader').style.display='none';document.getElementById('blogHeader').style.display='none';document.getElementById('noticeHeader').style.display='none';document.querySelector('.tabs').style.display='none';document.querySelector('.notice').style.display='none';
+ document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>Admin Panel · Demo</div><div class="wallet-modal"><div class="login-hero"><div class="crown">⚙</div><h2>Website Admin</h2><p class="form-help">Local preview controls only</p></div><div class="admin-grid"><div class="admin-stat">Products<b>${stable.length+welfare.length+activity.length}</b></div><div class="admin-stat">Demo requests<b>${demoWallet.records.length}</b></div><div class="admin-stat">Recharge records<b>${demoWallet.records.filter(r=>r.type==='deposit').length}</b></div><div class="admin-stat">Withdrawal records<b>${demoWallet.records.filter(r=>r.type==='withdraw').length}</b></div></div><button class="account-action" style="width:100%;margin:5px 0" onclick="showBankSettings()">Edit Bank / UPI Settings</button><button class="account-action" style="width:100%;margin:5px 0" onclick="showProfile()">Edit Site Profile</button><button class="account-action" style="width:100%;margin:5px 0" onclick="toggleDemoTheme()">Switch Gold / Blue Accent</button><button class="account-action" style="width:100%;margin:5px 0;background:#294a75;color:white" onclick="clearDemoRecords()">Clear Local Demo Records</button><div class="admin-note"><b>Security notice:</b> এই Admin Panel শুধু browser-এর local demo। এতে কোনো admin password protection, server database, user management বা real payment approval নেই। HTML file-এ admin access secure করা যায় না।</div></div>`;
+}
+function toggleDemoTheme(){const on=document.body.dataset.altTheme==='1';document.body.dataset.altTheme=on?'0':'1';document.documentElement.style.setProperty('--gold',on?'#e6c16e':'#75c7ff');toast(on?'Gold accent চালু হয়েছে।':'Blue accent চালু হয়েছে।');}
+function clearDemoRecords(){if(!confirm('এই ব্রাউজারের demo transaction records মুছবেন?'))return;demoWallet.records=[];demoWallet.deposit=0;demoWallet.withdrawal=0;demoWallet.purchases=0;saveWallet();showAdmin();toast('Local demo records মুছে দেওয়া হয়েছে।');}
+
+function showWalletForm(type,presetAmount=''){
+ const isDeposit=type==='deposit';
+ const title=isDeposit?'Deposit':'Withdraw (Demo)';
+ if(isDeposit){
+  document.getElementById('products').innerHTML=`
+  <div class="notice-header"><button onclick="showAccount()">‹</button>${title}</div>
+  <div class="wallet-modal">
+   <p>Current available balance: <b>₹${money(walletBalance())}</b></p>
+   <div class="home-section-title">Choose a Deposit Level</div>
+   <div class="level-grid">${depositLevels.map(item=>`<div class="level-card"><div class="level-name">LEVEL ${item.level}</div><div class="level-price">₹${money(item.amount)}</div><button type="button" class="level-button" onclick="chooseWalletAmount(${item.amount})">Select ₹${money(item.amount)}</button></div>`).join('')}</div>
+   <div class="level-disclaimer">এটি শুধু local HTML demo। এই amount নির্বাচন করলে বাস্তব টাকা জমা বা balance credit হয় না।</div>
+   <label>Choose Recharge Amount (₹)</label>
+   <div class="quick-amounts" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 14px">
+    <button type="button" class="account-action quick-amount" onclick="chooseWalletAmount(290)">₹290</button><button type="button" class="account-action quick-amount" onclick="chooseWalletAmount(1000)">₹1,000</button><button type="button" class="account-action quick-amount" onclick="chooseWalletAmount(2800)">₹2,800</button><button type="button" class="account-action quick-amount" onclick="chooseWalletAmount(9800)">₹9,800</button><button type="button" class="account-action quick-amount" onclick="chooseWalletAmount(21800)">₹21,800</button><button type="button" class="account-action quick-amount" onclick="chooseWalletAmount(42800)">₹42,800</button>
+   </div>
+   <label>Or Enter Recharge Amount (₹)</label><input id="walletAmount" type="number" min="1" step="0.01" value="${presetAmount||''}" placeholder="Enter amount">
+   <label style="display:block;margin-top:14px">Payment Method</label><select id="rechargeMethod" onchange="switchRechargeMethod()" style="width:100%;padding:12px;border-radius:8px;margin-bottom:12px;background:#203d66;color:#fff;border:1px solid #3d5b86"><option value="qr">QR Code</option><option value="upi">UPI ID</option></select>
+   <div class="phonepe-panel">
+    
+    <div id="qrPay">
+    <div class="phonepe-qr" style="min-height:180px;display:grid;place-items:center;background:#191919;border:1px dashed #c18aff;color:#c18aff;padding:20px"><div><div style="font-size:42px">🔒</div><b>DEMO ONLY</b><br><small>No real payment QR configured</small></div></div>
+    </div><div id="upiPay" style="display:none"><p>এই UPI ID-তে পেমেন্ট করুন</p><div class="upi-line">No UPI ID configured</div><p class="wallet-hint">প্রকৃত পেমেন্ট চালু করার আগে নিজের verified merchant UPI এবং payment gateway যুক্ত করুন।</p></div>
+   </div>
+   <label>UPI Transaction ID / UTR</label><input id="walletTxn" type="text" maxlength="80" placeholder="Enter payment reference">
+   <button class="account-action" onclick="submitWallet('deposit')">Submit Deposit Request</button>
+   <p class="pending-note">পেমেন্ট করার পর Transaction ID জমা দিন। এটি বর্তমানে HTML demo; কোনো payment gateway বা server-side verification নেই। যাচাই ছাড়া balance যোগ হবে না।</p>
+  </div>`;
+  return;
+ }
+ document.getElementById('products').innerHTML=`
+ <div class="notice-header"><button onclick="showAccount()">‹</button>${title}</div>
+ <div class="wallet-modal">
+  <p>Current available balance: <b>₹${money(walletBalance())}</b></p>
+  <label>Enter Withdrawal Amount (₹)</label><input id="walletAmount" type="number" min="210" step="1" placeholder="Minimum withdrawal ₹210">
+  <p class="wallet-hint" style="margin:8px 0 14px">Minimum withdrawal: <b>₹210</b></p>
+  <button class="account-action" onclick="submitWallet('withdraw')">Request Demo Withdrawal</button>
+  <p class="wallet-hint">এটি শুধু পরীক্ষার জন্য স্থানীয় demo হিসাব। কোনো বাস্তব withdrawal হয় না।</p>
+ </div>`;
+}
+function chooseWalletAmount(amount){const field=document.getElementById('walletAmount');if(field)field.value=amount;}
+function switchRechargeMethod(){const method=document.getElementById('rechargeMethod')?.value||'qr';const qr=document.getElementById('qrPay');const upi=document.getElementById('upiPay');if(qr)qr.style.display=method==='qr'?'block':'none';if(upi)upi.style.display=method==='upi'?'block':'none';}
+function submitWallet(type){
+ const field=document.getElementById('walletAmount');
+ const amount=Number(field&&field.value);
+ if(!Number.isFinite(amount)||amount<=0){toast('সঠিক amount লিখুন।');return}
+ if(type==='withdraw'&&amount<210){toast('Minimum withdrawal amount ₹210।');return}
+ if(type==='deposit'){
+  const txn=(document.getElementById('walletTxn')?.value||'').trim();
+  if(!txn){toast('UPI Transaction ID / UTR লিখুন।');return}
+  demoWallet.records.unshift({type:'deposit',amount,time:new Date().toLocaleString(),status:'Pending verification',txn});
+  saveWallet();
+  document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>Deposit Request</div><div class="wallet-modal"><h3>Request submitted (Pending)</h3><p>Amount: <b>₹${money(amount)}</b></p><p>Transaction ID: <b>${txn.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</b></p><p class="pending-note">এটি শুধু local demo request। সার্ভার বা PhonePe payment verification যুক্ত নেই, তাই টাকা পাওয়া বা balance credit হওয়া নিশ্চিত নয়।</p></div>`;
+  return;
+ }
+ if(amount>walletBalance()){toast('Demo balance-এর চেয়ে বেশি withdraw করা যাবে না।');return}
+ demoWallet.withdrawal+=amount;
+ demoWallet.records.unshift({type:'withdraw',amount,time:new Date().toLocaleString(),status:'Demo'});
+ saveWallet();showAccount();toast('Demo withdrawal হিসাব আপডেট হয়েছে।');
+}
+function showWalletHistory(filter){
+const rows=demoWallet.records.filter(r=>!filter||r.type===filter);
+document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>${filter==='deposit'?'Recharge Record':filter==='withdraw'?'Withdraw Record':'Balance Record'}</div><div class="wallet-modal"><p>Available Demo Balance: <b>₹${money(walletBalance())}</b></p>${rows.length?rows.map(r=>`<div class="wallet-record">${r.type==='deposit'?'Recharge':r.type==='buy'?'Buy: '+safeText(r.name||'Product'):'Withdrawal'}　₹${money(r.amount)}<br><small>${r.time}</small>${r.status?`<br><small>Status: ${r.status}</small>`:''}</div>`).join(''):'<p class="wallet-hint">কোনো transaction নেই। নতুন account-এর balance ₹0.00।</p>'}</div>`;
+}
+function toast(msg){alert(msg)}
+const products=document.getElementById('products');showHome();syncProfile();
+
+
+// === GoldSocial/GOLD demo enhancements ===
+// This file remains a client-side demo. Real cross-device accounts, secure admin,
+// payment verification and online database require a trusted backend.
+function showSupport(){
+ document.getElementById('mainHeader').style.display='none';document.getElementById('blogHeader').style.display='none';document.getElementById('noticeHeader').style.display='none';document.querySelector('.tabs').style.display='none';document.querySelector('.notice').style.display='none';
+ document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>Customer Support</div><div class="wallet-modal"><div class="login-hero"><div class="crown">☏</div><h2>How can we help?</h2><p class="form-help">Demo support center</p></div><div class="support-card"><b>Account & Login</b><p class="form-help">Login/Register সমস্যা হলে আপনার Account ID লিখে রাখুন। Password কাউকে দেবেন না।</p></div><div class="support-card"><b>Deposit / Withdrawal</b><p class="form-help">এই HTML demo-তে কোনো real payment বা withdrawal processing হয় না। Pending status মানেই টাকা পাওয়া বা পাঠানো হয়েছে—এমন নয়।</p></div><div class="support-card"><b>Contact</b><p class="form-help">এখানে support email/WhatsApp যোগ করার জন্য admin-এর verified contact details দরকার।</p><label>Message</label><textarea id="supportMessage" maxlength="1000" placeholder="Write your question..." style="width:100%;min-height:90px;background:#0d274d;color:white;border:1px solid #42658f;border-radius:9px;padding:12px;margin-top:8px"></textarea><button class="account-action" style="width:100%;margin-top:10px" onclick="submitSupportMessage()">Save Demo Support Request</button></div><div class="admin-note">Privacy: এই request শুধু এই browser/device-এ save হবে। এটি online support ticket নয়।</div></div>`;
+}
+function submitSupportMessage(){const msg=(document.getElementById('supportMessage')?.value||'').trim();if(!msg){toast('আপনার message লিখুন।');return}let arr=[];try{arr=JSON.parse(localStorage.getItem('goldDemoSupport')||'[]')}catch(e){}arr.unshift({accountId:demoSession.accountId||'GUEST',message:msg,time:new Date().toLocaleString(),status:'Saved locally'});try{localStorage.setItem('goldDemoSupport',JSON.stringify(arr))}catch(e){}toast('Demo support request এই ডিভাইসে save হয়েছে।');showAccount()}
+function showAdmin(){
+ document.getElementById('mainHeader').style.display='none';document.getElementById('blogHeader').style.display='none';document.getElementById('noticeHeader').style.display='none';document.querySelector('.tabs').style.display='none';document.querySelector('.notice').style.display='none';
+ let users=[];try{users=JSON.parse(localStorage.getItem('goldDemoAccounts')||'[]')}catch(e){}
+ let support=[];try{support=JSON.parse(localStorage.getItem('goldDemoSupport')||'[]')}catch(e){}
+ const allRecords=(demoWallet.records||[]);
+ document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>Admin Panel · Local Demo</div><div class="wallet-modal"><div class="login-hero"><div class="crown">⚙</div><h2>Admin Dashboard</h2><p class="form-help">এই browser-এর local demo data only</p></div><div class="admin-grid"><div class="admin-stat">Registered users<b>${users.length}</b></div><div class="admin-stat">Current account records<b>${allRecords.length}</b></div><div class="admin-stat">Pending deposits<b>${allRecords.filter(r=>r.type==='deposit'&&/pending/i.test(r.status||'')).length}</b></div><div class="admin-stat">Support messages<b>${support.length}</b></div></div><h3>Users on this device</h3>${users.length?users.map(u=>`<div class="admin-user"><b>${safeText(u.displayName||u.username)}</b><br>Username: ${safeText(u.username)}<br>Account ID: <b>${safeText(u.accountId)}</b><br><small>Created: ${safeText(u.createdAt||'')}</small></div>`).join(''):'<p class="form-help">No registered demo users found.</p>'}<h3>Current account transaction requests</h3>${allRecords.length?allRecords.map((r,i)=>`<div class="admin-request"><b>${safeText(r.type||'record').toUpperCase()} · ₹${money(r.amount||0)}</b><br><small>${safeText(r.time||'')}</small><br><span class="status-chip">${safeText(r.status||'Demo')}</span>${r.txn?`<br>Reference: ${safeText(r.txn)}`:''}<br>${(r.type==='deposit'||r.type==='withdraw')&&/pending/i.test(r.status||'')?`<button class="small-admin-btn" onclick="reviewDemoRequest(${i},'Reviewed - not payment verified')">Mark reviewed</button><button class="small-admin-btn" onclick="reviewDemoRequest(${i},'Rejected - demo only')">Reject</button>`:''}</div>`).join(''):'<p class="form-help">No requests for the current account.</p>'}<h3>Support messages on this device</h3>${support.length?support.map(r=>`<div class="admin-request"><b>${safeText(r.accountId)}</b><br>${safeText(r.message)}<br><small>${safeText(r.time)} · ${safeText(r.status)}</small></div>`).join(''):'<p class="form-help">No support messages.</p>'}<button class="account-action" style="width:100%;margin:6px 0" onclick="showBankSettings()">Edit Bank / UPI Settings</button><button class="account-action" style="width:100%;margin:6px 0" onclick="toggleDemoTheme()">Switch Gold / Blue Accent</button><button class="account-action" style="width:100%;margin:6px 0;background:#294a75;color:white" onclick="showDatabaseInfo()">Online Database Setup</button><div class="admin-note"><b>Security:</b> Admin is not password protected in this HTML demo. Do not publish it as a real investment/payment service. Real user management and payment approval must run on a secure server.</div></div>`;
+}
+function reviewDemoRequest(index,status){if(!demoWallet.records[index])return;demoWallet.records[index].status=status;saveWallet();showAdmin();toast('Local demo status updated. কোনো real payment verify বা balance credit হয়নি।')}
+function showDatabaseInfo(){document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAdmin()">‹</button>Online Database Setup</div><div class="wallet-modal"><h3>Online database is not connected</h3><p class="form-help">একাধিক মোবাইল/ডিভাইসে একই account ব্যবহার করতে HTML localStorage যথেষ্ট নয়। Backend API, database, secure password hashing, session authentication, server-side admin roles, audit logs এবং payment gateway webhook verification দরকার।</p><div class="support-card"><b>Suggested architecture</b><p class="form-help">Frontend: এই HTML UI<br>Backend: Node.js/Express বা অন্য trusted server<br>Database: PostgreSQL / Firebase<br>Authentication: server-managed sessions or Firebase Auth<br>Payments: verified provider webhook; never trust a client-submitted UTR alone</p></div><p class="admin-note">এই ফাইলে কোনো database key, admin password বা live payment integration যোগ করা হয়নি।</p></div>`}
+// Keep user-specific profile, wallet, and history scoped to the current local demo account.
+const originalShowAccountForEnhancements=showAccount;
+showAccount=function(){originalShowAccountForEnhancements();const wrap=document.querySelector('.account-wrap');if(wrap&&!document.getElementById('supportRow')){const row=document.createElement('div');row.id='supportRow';row.className='account-row';row.innerHTML='<span class="row-icon">☏</span>Customer Support <span class="arrow">→</span>';row.onclick=showSupport;const admin=document.createElement('div');admin.className='account-row';admin.innerHTML='<span class="row-icon">⚙</span>Admin Panel (Local Demo) <span class="arrow">→</span>';admin.onclick=showAdmin;const db=document.createElement('div');db.className='account-row';db.innerHTML='<span class="row-icon">☁</span>Online Database Setup <span class="arrow">→</span>';db.onclick=showDatabaseInfo;wrap.append(row,admin,db);}}
+// Make withdrawals requests pending rather than pretending a payout occurred.
+const originalSubmitWalletForEnhancements=submitWallet;
+submitWallet=function(type){
+ if(type!=='withdraw'){return originalSubmitWalletForEnhancements(type)}
+ const field=document.getElementById('walletAmount');const amount=Number(field&&field.value);
+ if(!Number.isFinite(amount)||amount<=0){toast('সঠিক amount লিখুন।');return}
+ if(amount<210){toast('Minimum withdrawal amount ₹210।');return}
+ if(amount>walletBalance()){toast('Demo balance-এর চেয়ে বেশি withdraw করা যাবে না।');return}
+ demoWallet.records.unshift({type:'withdraw',amount,time:new Date().toLocaleString(),status:'Pending demo review'});saveWallet();
+ document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>Withdrawal Request</div><div class="wallet-modal"><h3>Demo request saved</h3><p>Amount: <b>₹${money(amount)}</b></p><p class="pending-note">Status: Pending demo review. কোনো বাস্তব টাকা পাঠানো হয়নি এবং balance কাটা হয়নি।</p><button class="account-action" onclick="showWalletHistory('withdraw')">View withdrawal history</button></div>`;
+}
+
+</script>
+<script>
+// GoldSocial online integration. Configure a deployed HTTPS API URL in Online Database Setup.
+const goldApiBase = () => (localStorage.getItem('goldApiBase') || '').trim().replace(/\/$/, '');
+const goldApiToken = () => localStorage.getItem('goldApiToken') || '';
+async function goldApi(path, options={}) {
+ const base=goldApiBase(); if(!base) throw new Error('Online API URL সেট করা হয়নি। Account → Online Database Setup খুলুন।');
+ const headers={'Content-Type':'application/json',...(options.headers||{})}; if(goldApiToken())headers.Authorization='Bearer '+goldApiToken();
+ let response; try { response=await fetch(base+path,{...options,headers}); } catch(e) { throw new Error('Backend-এ সংযোগ করা যাচ্ছে না। URL, HTTPS এবং CORS settings পরীক্ষা করুন।'); }
+ const data=await response.json().catch(()=>({error:'Invalid server response'})); if(!response.ok)throw new Error(data.error||('Request failed ('+response.status+')')); return data;
+}
+function goldSetOnlineUser(data){
+ localStorage.setItem('goldApiToken',data.token); demoSession={loggedIn:true,username:data.user.username,accountId:data.user.accountId};
+ demoProfile={name:data.user.displayName,email:data.user.username.includes('@')?data.user.username:'',avatar:''};
+ demoWallet={deposit:Number(data.user.balancePaise||0)/100,withdrawal:0,purchases:0,records:[]};
+ try{localStorage.setItem('goldDemoSession',JSON.stringify(demoSession));localStorage.setItem('goldDemoProfile',JSON.stringify(demoProfile));}catch(e){}
+}
+const goldLocalRegister=registerDemo;
+registerDemo=async function(){
+ if(!goldApiBase())return goldLocalRegister();
+ const displayName=(document.getElementById('demoRegDisplay')?.value||'').trim();
+ const username=(document.getElementById('demoAuthName')?.value||'').trim().toLowerCase();
+ const password=document.getElementById('demoAuthPassword')?.value||''; const confirmPassword=document.getElementById('demoAuthConfirm')?.value||'';
+ if(!displayName||username.length<3){showAuthError('নাম এবং সঠিক username/email লিখুন।');return;} if(password.length<10){showAuthError('Online account-এর জন্য অন্তত ১০ অক্ষরের password দিন।');return;} if(password!==confirmPassword){showAuthError('Confirm password মিলছে না।');return;}
+ try{const d=await goldApi('/api/auth/register',{method:'POST',body:JSON.stringify({displayName,username,password})});goldSetOnlineUser(d);await goldRefreshWallet();showAccount();syncProfile();toast('Online registration সফল। Account ID: '+d.user.accountId);}catch(e){showAuthError(e.message);}
+};
+const goldLocalLogin=loginDemo;
+loginDemo=async function(){
+ if(!goldApiBase())return goldLocalLogin();
+ const username=(document.getElementById('demoAuthName')?.value||'').trim().toLowerCase();const password=document.getElementById('demoAuthPassword')?.value||'';
+ if(!username||!password){showAuthError('Username/email এবং password লিখুন।');return;}
+ try{const d=await goldApi('/api/auth/login',{method:'POST',body:JSON.stringify({username,password})});goldSetOnlineUser(d);await goldRefreshWallet();showAccount();syncProfile();toast('Online login সফল। Account ID: '+d.user.accountId);}catch(e){showAuthError(e.message);}
+};
+const goldLocalLogout=logoutDemo;
+logoutDemo=function(){localStorage.removeItem('goldApiToken');goldLocalLogout();};
+async function goldRefreshWallet(){const d=await goldApi('/api/wallet');demoWallet={deposit:Number(d.balancePaise||0)/100,withdrawal:0,purchases:0,records:(d.transactions||[]).map(t=>({type:t.kind==='withdrawal'?'withdraw':t.kind,amount:Number(t.amountPaise)/100,status:t.status,txn:t.reference||'',time:new Date(t.created_at).toLocaleString()}))};saveWallet();return d;}
+function goldLoadRazorpay(){return new Promise((resolve,reject)=>{if(window.Razorpay)return resolve();const s=document.createElement('script');s.src='https://checkout.razorpay.com/v1/checkout.js';s.onload=resolve;s.onerror=()=>reject(new Error('Razorpay Checkout লোড হয়নি। Internet connection পরীক্ষা করুন।'));document.head.appendChild(s);});}
+const goldLocalSubmitWallet=submitWallet;
+submitWallet=async function(type){
+ if(!goldApiBase()||!goldApiToken())return goldLocalSubmitWallet(type);
+ const amount=Number(document.getElementById('walletAmount')?.value);if(!Number.isFinite(amount)||amount<=0){toast('সঠিক amount লিখুন।');return;}
+ try{
+  if(type==='withdraw'){
+   const d=await goldApi('/api/withdrawals',{method:'POST',body:JSON.stringify({amount})});await goldRefreshWallet();toast(d.message||'Withdrawal request জমা হয়েছে।');showWalletHistory('withdraw');return;
+  }
+  if(amount<1||amount>100000){toast('₹1 থেকে ₹100,000-এর মধ্যে amount দিন।');return;}
+  const order=await goldApi('/api/payments/order',{method:'POST',body:JSON.stringify({amount})});await goldLoadRazorpay();
+  const checkout=new window.Razorpay({key:order.keyId,amount:order.amount,currency:order.currency,name:order.name,description:order.description,order_id:order.orderId,prefill:{name:demoProfile.name||'',email:demoProfile.email||''},theme:{color:'#d4af37'},handler:async function(response){
+    try{const v=await goldApi('/api/payments/verify',{method:'POST',body:JSON.stringify(response)});demoProfile.name=v.user.displayName;await goldRefreshWallet();toast('Payment server-side verified. Wallet balance updated.');showAccount();}
+    catch(e){toast('Payment verification pending/failed: '+e.message+' Payment ID save করে support-এ দিন।');}
+   },modal:{ondismiss:function(){toast('Checkout বন্ধ হয়েছে। Payment complete না হলে balance credit হবে না।');}}});
+  checkout.on('payment.failed',function(response){toast('Payment failed: '+(response.error?.description||'Try again later.'));});checkout.open();
+ }catch(e){toast(e.message);}
+};
+const goldLocalDatabaseInfo=showDatabaseInfo;
+showDatabaseInfo=function(){
+ const saved=goldApiBase();document.getElementById('products').innerHTML=`<div class="notice-header"><button onclick="showAccount()">‹</button>Online Database & Payment Setup</div><div class="wallet-modal"><h3>Connect your deployed backend</h3><p class="form-help">এখানে backend deploy করার পর তার HTTPS URL দিন। URL না থাকলে online database/payment এখনো চালু হয়নি।</p><label>Backend API HTTPS URL</label><input id="goldApiUrl" value="${safeText(saved)}" placeholder="https://your-api.example.com" autocomplete="url" style="width:100%;box-sizing:border-box;background:#0d274d;color:white;border:1px solid #42658f;border-radius:9px;padding:12px;margin:8px 0 12px"><button class="account-action" style="width:100%" onclick="goldSaveApiUrl()">Save API URL</button><button class="account-action" style="width:100%;margin-top:8px;background:#294a75;color:white" onclick="goldTestApi()">Test Database Connection</button><div id="goldApiStatus" class="admin-note" style="margin-top:12px">${saved?'Saved URL: '+safeText(saved):'Not connected yet.'}</div><div class="support-card"><b>Required before live use</b><p class="form-help">1. PostgreSQL database + schema.sql<br>2. Deploy GoldSocial_Backend project over HTTPS<br>3. Set DATABASE_URL, JWT_SECRET, Razorpay Test keys and webhook secret on the server<br>4. Razorpay webhook: /api/payments/webhook<br>5. Test a payment before switching to Live mode</p></div><p class="admin-note">Secret keys কখনো এখানে বা HTML ফাইলে দেবেন না। Payment verification server-এ হয়; UTR/ছবি দিয়ে auto-credit হয় না।</p></div>`;
+};
+function goldSaveApiUrl(){const v=(document.getElementById('goldApiUrl')?.value||'').trim().replace(/\/$/,'');if(v&&!/^https:\/\//i.test(v)&&!/^http:\/\/localhost(:\d+)?$/i.test(v)){toast('Live backend-এর জন্য HTTPS URL দিন।');return;}if(!v){localStorage.removeItem('goldApiBase');toast('API URL মুছে দেওয়া হয়েছে।');return;}localStorage.setItem('goldApiBase',v);document.getElementById('goldApiStatus').textContent='URL saved. এখন Test Database Connection চাপুন।';toast('API URL এই browser-এ save হয়েছে।');}
+async function goldTestApi(){const status=document.getElementById('goldApiStatus');if(!goldApiBase()){status.textContent='API URL দিন এবং Save API URL চাপুন।';return;}status.textContent='Connecting…';try{const d=await goldApi('/api/health',{headers:{}});status.textContent='Connected ✓ Database: '+d.database+' | Payment gateway configured: '+(d.paymentsConfigured?'Yes':'No');}catch(e){status.textContent='Connection failed: '+e.message;}}
+// Refresh online wallet balance when opening the account page. Local demo remains available if no API URL is set.
+const goldBaseShowAccount=showAccount;
+showAccount=async function(){if(goldApiBase()&&goldApiToken()){try{const me=await goldApi('/api/me');demoSession={loggedIn:true,username:me.user.username,accountId:me.user.accountId};demoProfile={name:me.user.displayName,email:me.user.username.includes('@')?me.user.username:'',avatar:''};await goldRefreshWallet();}catch(e){if(/login again|Account not found/i.test(e.message)){localStorage.removeItem('goldApiToken');toast('Online session শেষ হয়েছে। আবার login করুন।');}}}return goldBaseShowAccount();};
+
+</script>
+</body></html>
